@@ -1,0 +1,11 @@
+{% extends '@EasyAdmin/default/list.html.twig' %}
+
+{% block global_actions %}
+     {{ parent() }}
+     <div class="button-action">
+          <a title="fetch new spreadsheets from GoogleSheets" class="btn btn-warning action-new" href="{{ path('sync_spreadsheets') }}">
+               <i class="fa fa-fw fa-refresh"></i>
+               {{ 'sync'|trans(_trans_parameters) }}
+          </a>
+     </div>
+{% endblock %}

@@ -1,0 +1,16 @@
+pd_user:
+  user_class: App\Entity\User
+  profile_class: App\Entity\Profile
+  group_class: App\Entity\Group
+  default_group: ''
+  login_redirect: 'home'
+  email_confirmation: true
+  welcome_email: true
+  user_registration: true
+  #template_path: '@Admin/Auth'
+  resetting_request_time: 7200
+  mail_sender_address: 'ke.configurator@gmail.com'
+  mail_sender_name: 'ke.configurator@gmail.com'
+  active_language: ['en', de]
+  register_type: 'Pd\UserBundle\Form\RegisterType'
+  resetting_type: 'Pd\UserBundle\Form\ResettingType'

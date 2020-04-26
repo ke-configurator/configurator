@@ -1,0 +1,3 @@
+authorization:
+    resource: "@PdUserBundle/Resources/config/routing.yaml"
+    prefix: 'auth'
