@@ -69,7 +69,7 @@
     },
     "scripts": {
         "auto-scripts": {
-            "assets:install %PUBLIC_DIR%": "symfony-cmd"
+            "assets:install %PUBLIC_DIR% --env=prod": "symfony-cmd"
         },
         "post-install-cmd": [
             "@auto-scripts"
