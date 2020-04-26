@@ -1,0 +1,20 @@
+<div style="font-weight: bold">Calculations</div>
+<ul class="navbar-nav mr-auto">
+    {% for calculationGroup in calculationGroups %}
+        <li class="nav-item">
+            <a class="nav-link"
+               href="{{ path('home') }}">{{ calculationGroup.title }} </a>
+            <ul class="">
+                {% for calculation in calculationGroup.calculations %}
+                    {% if calculation.isActive %}
+                        <li class="">
+                            <a class=""
+                               href="{{ path('input', {spreadsheetId: calculation.spreadSheet.uid}) }}">{{ calculation.title }} </a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+
+        </li>
+    {% endfor %}
+</ul>

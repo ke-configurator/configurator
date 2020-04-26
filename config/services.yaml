@@ -31,3 +31,8 @@ services:
             - 'KE-Configurator'
             - '%kernel.project_dir%/config/secrets/credentials.sheets.googleapis.com.json'
             - '%kernel.project_dir%/config/secrets/client_secret.json'
+
+    App\Service\GoogleClientService:
+        arguments:
+            - 'KE-Configurator'
+            - '%env(GOOGLE_APPLICATION_CREDENTIALS)%'

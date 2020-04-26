@@ -22,7 +22,7 @@ class GoogleSheetsService extends GoogleSheetsRequests
     /**
      * Client service
      *
-     * @var GoogleApiClientService
+     * @var GoogleClientService
      */
     protected $clientService;
 
@@ -34,7 +34,7 @@ class GoogleSheetsService extends GoogleSheetsRequests
     protected $sheetService;
 
     /**
-     * Goggle Sreadsheets id
+     * Goggle Spreadsheets id
      *
      * @var string
      */
@@ -60,7 +60,6 @@ class GoogleSheetsService extends GoogleSheetsRequests
      *
      * @param string $id
      * @return boolean
-     * @throws Google_Exception
      */
     public function setSheetServices($id)
     {
@@ -74,7 +73,7 @@ class GoogleSheetsService extends GoogleSheetsRequests
             Google_Service_Sheets::DRIVE,
             Google_Service_Sheets::SPREADSHEETS
         ]));
-//        $client             = $this->clientService->setClientVerification($client); // set verification
+
         $this->sheetService = new Google_Service_Sheets($client);
 
         return true;
@@ -152,12 +151,15 @@ class GoogleSheetsService extends GoogleSheetsRequests
     {
         preg_match('/=(.*)!([A-Z])([0-9]+)/', $inputField, $matches);
 
+        if(4 !== count($matches)) {
+            return null;
+        }
         $sheet  = $matches[1];
         $sheet  = $this->sheets[$sheet];
         $colIdx = $matches[2];
         $rowIdx = $matches[3];
 
-        $value = $sheet[$rowIdx-1][$this->alpha2num($colIdx)-1];
+        $value = $sheet[$rowIdx - 1][$this->alpha2num($colIdx) - 1];
 
         return $value;
     }
@@ -165,7 +167,7 @@ class GoogleSheetsService extends GoogleSheetsRequests
     protected function alpha2num($alpha)
     {
         $num = 0;
-        foreach(str_split($alpha) as $char) {
+        foreach (str_split($alpha) as $char) {
             $num = $num * 10 + ord($char) - 64;
         }
 

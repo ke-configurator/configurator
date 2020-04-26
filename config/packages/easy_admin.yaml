@@ -30,15 +30,27 @@ easy_admin:
             label: 'Calculation Groups'
             list:
                 title: "Liste aller Dimensionierungsgruppen"
+                actions: ['show']
                 fields:
                     - title
                     - description
                     - calculations
+                    - isActive
                     - created
             form:
                 fields:
                     - title
                     - description
+                    - isActive
+            show:
+                fields:
+                    - title
+                    - description
+                    - isActive
+                    - created
+                    - createdBy
+                    - updated
+                    - updatedBy
 
         Calculation:
             class: App\Entity\Calculation
@@ -78,7 +90,9 @@ easy_admin:
             templates:
                 list: 'admin/listSpreadSheet.html.twig'
             list:
-                actions: ['show']
+                actions:
+                    - 'show'
+                    - { name: 'inputs', type: 'route' }
                 title: "Liste aller SpreadSheets"
                 fields:
                     - name

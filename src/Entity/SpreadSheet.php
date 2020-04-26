@@ -108,7 +108,7 @@ class SpreadSheet
 
     public function __toString()
     {
-        return sprintf('%s [%s]', $this->getName(), $this->getUid());
+        return sprintf('%s [%s]', $this->getName(), substr($this->getUid(), 0, 8));
     }
 
     public function getId(): ?int

@@ -11,21 +11,21 @@ use Symfony\Component\Routing\Annotation\Route;
 
 use App\Entity\SpreadSheet;
 use App\Repository\SpreadSheetRepository;
-use App\Service\DriveService;
+use App\Service\GoogleDriveService;
 
 class SpreadSheetSyncController extends AbstractController
 {
     /**
      * @Route("/syncSpreadSheets", name="sync_spreadsheets")
      * @param SpreadSheetRepository $repository
-     * @param DriveService $driveService
+     * @param GoogleDriveService $driveService
      * @param EntityManagerInterface $em
      * @return RedirectResponse
      * @throws ConnectionException
      */
     public function syncSpreadSheets(
         SpreadSheetRepository $repository,
-        DriveService $driveService,
+        GoogleDriveService $driveService,
         EntityManagerInterface $em
     ) {
         $em->getConnection()->beginTransaction();
@@ -36,7 +36,7 @@ class SpreadSheetSyncController extends AbstractController
                 $existingSpreadSheets[$spreadSheet->getUid()] = $spreadSheet;
             }
 
-            foreach ($driveService->getSpreadSheetList() as $name => $uid) {
+            foreach ($driveService->getSpreadSheetList() as $uid => $name) {
                 if (!isset($existingSpreadSheets[$uid])) {
                     $spreadSheet = new SpreadSheet();
                     $spreadSheet

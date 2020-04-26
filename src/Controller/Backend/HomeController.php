@@ -5,14 +5,18 @@ namespace App\Controller\Backend;
 use App\Exception\MissingInputSheetException;
 use App\Service\GoogleApiClientService;
 use App\Service\GoogleClientService;
+use App\Service\GoogleDriveService;
 use App\Service\GoogleSheetsService;
 use Google_Exception;
+use Google_Service_Drive;
 use Google_Service_Sheets;
 use Google_Service_Sheets_Sheet;
+use Google_Service_SQLAdmin;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -21,13 +25,13 @@ class HomeController extends AbstractController
 {
     /**
      * @Route("/input/{spreadsheetId}", name="input")
-     * @param string $spreadsheetId
      * @param GoogleSheetsService $service
+     * @param GoogleDriveService $driveService
+     * @param string $spreadsheetId
      * @return Response
-     * @throws Google_Exception
      * @throws MissingInputSheetException
      */
-    public function input(string $spreadsheetId, GoogleSheetsService $service)
+    public function input(GoogleSheetsService $service, GoogleDriveService $driveService, string $spreadsheetId)
     {
         $service->setSheetServices($spreadsheetId);
         $inputParameters = $service->getInputParameters();
@@ -57,7 +61,7 @@ class HomeController extends AbstractController
         if ($form->isSubmitted() and $form->isValid()) {
 
             $updateRange = 'A' . 7;
-            $data = [[1, 2], [3, 4]];
+            $data        = [[1, 2], [3, 4]];
             $service->InsertSheetData($updateRange, $data);
 //            $sheetService = $service->getService();
 //            $updateBody  = new \Google_Service_Sheets_ValueRange([

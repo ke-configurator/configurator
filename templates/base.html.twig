@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}Welcome!{% endblock %}</title>
+    <title>{% block title %}KE-Configurator!{% endblock %}</title>
     {% block stylesheets %}
         <style>
             body {
@@ -10,55 +10,81 @@
             }
         </style>
         {#            <link rel="stylesheet" href="{{ asset('build/app.css') }}" />#}
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
-              integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu"
-              crossorigin="anonymous">
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap-theme.min.css"
-              integrity="sha384-6pzBo3FDv/PJ8r2KRkGHifhEocL+1X2rVCTTkUfGk7/0pbek5mMa1upzvWbrUbOZ"
-              crossorigin="anonymous">
+{#        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"#}
+{#              integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu"#}
+{#              crossorigin="anonymous">#}
+{#        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap-theme.min.css"#}
+{#              integrity="sha384-6pzBo3FDv/PJ8r2KRkGHifhEocL+1X2rVCTTkUfGk7/0pbek5mMa1upzvWbrUbOZ"#}
+{#              crossorigin="anonymous">#}
+
+        <!-- Bootstrap CSS CDN -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+        <!-- Our Custom CSS -->
+        <link rel="stylesheet" href="style.css">
+
+        <!-- Font Awesome JS -->
+        <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
+        <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
+
     {% endblock %}
 </head>
 <body class="white-skin">
-<!--Main Navigation-->
-<header>
+<table>
+    <tr>
+        <td style="vertical-align: top; padding: 8px; min-width: 250px; background-color: #EEEEEE;">
+            {{ render(controller('App\\Controller\\Frontend\\MenuController:menuAction')) }}
+        </td>
+        <td style="vertical-align: top; padding: 8px 25px;">
+            {% block body %}{% endblock %}
+        </td>
+    </tr>
+</table>
 
-    <nav class="navbar fixed-top navbar-expand-lg navbar-dark pink scrolling-navbar">
-        <a class="navbar-brand" href="#"><strong>Navbar</strong></a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
-                    <a class="nav-link" href="{{ path('home') }}">Home <span class="sr-only">(current)</span></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ path('calculation_group_index') }}">Calculation Groups</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ path('calculation_index') }}">Calculations</a>
-                </li>
-            </ul>
-            <ul class="navbar-nav nav-flex-icons">
-                <li class="nav-item">
-                    <a class="nav-link"><i class="fab fa-facebook-f"></i></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link"><i class="fab fa-twitter"></i></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link"><i class="fab fa-instagram"></i></a>
-                </li>
-            </ul>
-        </div>
-    </nav>
-
-</header>
 <!--Main Navigation-->
-{% block body %}{% endblock %}
+{#<header>#}
+
+{#    <nav class="navbar fixed-top navbar-expand-lg navbar-dark pink scrolling-navbar">#}
+{#        <a class="navbar-brand" href="#"><strong>Navbar</strong></a>#}
+{#        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"#}
+{#                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">#}
+{#            <span class="navbar-toggler-icon"></span>#}
+{#        </button>#}
+{#        <div class="collapse navbar-collapse" id="navbarSupportedContent">#}
+{#            <ul class="navbar-nav mr-auto">#}
+{#                <li class="nav-item active">#}
+{#                    <a class="nav-link" href="{{ path('home') }}">Home <span class="sr-only">(current)</span></a>#}
+{#                </li>#}
+{#                {% for calculationGroup in calculationGroups %}#}
+{#                    <li class="nav-item">#}
+{#                        <a class="nav-link"#}
+{#                           href="{{ path('home') }}">{{ calculationGroup.title }} </a>#}
+{#                    </li>#}
+{#                {% endfor %}#}
+{#            </ul>#}
+{#            <ul class="navbar-nav nav-flex-icons">#}
+{#                <li class="nav-item">#}
+{#                    <a class="nav-link"><i class="fab fa-facebook-f"></i></a>#}
+{#                </li>#}
+{#                <li class="nav-item">#}
+{#                    <a class="nav-link"><i class="fab fa-twitter"></i></a>#}
+{#                </li>#}
+{#                <li class="nav-item">#}
+{#                    <a class="nav-link"><i class="fab fa-instagram"></i></a>#}
+{#                </li>#}
+{#            </ul>#}
+{#        </div>#}
+{#    </nav>#}
+
+{#</header>#}
+<!--Main Navigation-->
 {% block javascripts %}
+    {#    {{ encore_entry_js_files('app') }}#}
     <script src="{{ asset('build/app.js') }}"></script>
+    <script>
+      $(function() {
+        alert('working')
+      })
+    </script>
 {% endblock %}
 </body>
 </html>
