@@ -23,67 +23,6 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class HomeController extends AbstractController
 {
-    /**
-     * @Route("/input/{spreadsheetId}", name="input")
-     * @param GoogleSheetsService $service
-     * @param GoogleDriveService $driveService
-     * @param string $spreadsheetId
-     * @return Response
-     * @throws MissingInputSheetException
-     */
-    public function input(GoogleSheetsService $service, GoogleDriveService $driveService, string $spreadsheetId)
-    {
-        $service->setSheetServices($spreadsheetId);
-        $inputParameters = $service->getInputParameters();
-        $form            = $this->createInputForm($spreadsheetId, $inputParameters);
-
-        return $this->render('backend/home/input.html.twig', [
-            'form'            => $form->createView(),
-            'inputParameters' => $inputParameters
-        ]);
-    }
-
-    /**
-     * @Route("/update/{spreadsheetId}", name="update")
-     * @param string $spreadsheetId
-     * @param Request $request
-     * @param GoogleSheetsService $service
-     * @return Response
-     * @throws Google_Exception
-     * @throws MissingInputSheetException
-     */
-    public function update(string $spreadsheetId, Request $request, GoogleSheetsService $service)
-    {
-        $service->setSheetServices($spreadsheetId);
-        $inputParameters = $service->getInputParameters();
-        $form            = $this->createInputForm($spreadsheetId, $inputParameters);
-        $form->handleRequest($request);
-        if ($form->isSubmitted() and $form->isValid()) {
-
-            $updateRange = 'A' . 7;
-            $data        = [[1, 2], [3, 4]];
-            $service->InsertSheetData($updateRange, $data);
-//            $sheetService = $service->getService();
-//            $updateBody  = new \Google_Service_Sheets_ValueRange([
-//                'range'          => $updateRange,
-//                'majorDimension' => 'ROWS',
-//                'values'         => ['values' => 5],
-//            ]);
-//            $sheetService->spreadsheets_values->update(
-//                $spreadsheetId,
-//                $updateRange,
-//                $updateBody,
-//                ['valueInputOption' => 'USER_ENTERED']
-//            );
-//
-//            $service->updateSheet('Input', $data, 1);
-        }
-
-        return $this->render('backend/home/input.html.twig', [
-            'form'            => $form->createView(),
-            'inputParameters' => $inputParameters
-        ]);
-    }
 
     /**
      * @param string $spreadsheetId

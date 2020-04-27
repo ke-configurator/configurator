@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use App\Model\InputMeta;
+use App\Model\InputMetaCollection;
 use DateTime;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
@@ -13,9 +15,10 @@ use Gedmo\Mapping\Annotation as Gedmo;
  */
 class SpreadSheet
 {
-    const STATUS_UNCONFIRMED = 'unconfirmed';
-    const STATUS_SYNCED      = 'synced';
-    const STATUS_MISSING     = 'missing';
+    const STATUS_UNCONFIRMED   = 'unconfirmed';
+    const STATUS_SYNCED        = 'synced';
+    const STATUS_MISSING_FILE  = 'missing file';
+    const STATUS_MISSING_INPUT = 'missing input';
 
     /**
      * @ORM\Id()
@@ -35,6 +38,12 @@ class SpreadSheet
      * @Gedmo\Versioned
      */
     private $uid;
+
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     * @Gedmo\Versioned
+     */
+    private $inputConfig;
 
     /**
      * @ORM\Column(type="string", length=20)
@@ -136,6 +145,42 @@ class SpreadSheet
     public function setUid(string $uid): self
     {
         $this->uid = $uid;
+
+        return $this;
+    }
+
+    /**
+     * @return array|null
+     * @throws \App\Exception\MissingInputSheetException
+     */
+    public function getInputConfig(): ?InputMetaCollection
+    {
+        if (null === $this->inputConfig) {
+            return null;
+        }
+
+        $data                = json_decode($this->inputConfig, true);
+        $inputMetaCollection = new InputMetaCollection();
+        foreach ($data as $idx => $record) {
+            $inputMetaCollection->add(new InputMeta(array_keys($record), $record));
+        }
+
+        return $inputMetaCollection;
+    }
+
+    public function setInputConfig(?InputMetaCollection $inputMetaCollection): self
+    {
+        if (null === $inputMetaCollection or 0 == count($inputMetaCollection)) {
+            $this->inputConfig = null;
+        } else {
+
+            $data = [];
+            /** @var InputMeta $inputMeta */
+            foreach ($inputMetaCollection as $inputMeta) {
+                $data[] = $inputMeta->getAsArray();
+            }
+            $this->inputConfig = json_encode($data);
+        }
 
         return $this;
     }

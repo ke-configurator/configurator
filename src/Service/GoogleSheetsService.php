@@ -3,12 +3,15 @@
 namespace App\Service;
 
 use App\Exception\MissingInputSheetException;
+use App\Model\InputMeta;
+use App\Model\InputMetaCollection;
 use Exception;
 use Google_Exception;
 use Google_Service_Sheets;
 use Google_Service_Sheets_Sheet;
 use Google_Service_Sheets_ValueRange;
 use Google_Service_Sheets_BatchUpdateSpreadsheetRequest;
+use Symfony\Bundle\MakerBundle\InputConfiguration;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 
 use App\Service\Requests\GoogleSheetsRequests;
@@ -67,8 +70,9 @@ class GoogleSheetsService extends GoogleSheetsRequests
             throw new InvalidConfigurationException("spreadsheets id can not be empty");
         }
 
-        $this->id = $id;
-        $client   = $this->clientService->getClient('offline');   // get api clirent
+        $this->sheets = [];
+        $this->id     = $id;
+        $client       = $this->clientService->getClient('offline');   // get api clirent
         $client->setScopes(implode(' ', [
             Google_Service_Sheets::DRIVE,
             Google_Service_Sheets::SPREADSHEETS
@@ -100,6 +104,7 @@ class GoogleSheetsService extends GoogleSheetsRequests
     }
 
     /**
+     * @return InputMetaCollection
      * @throws MissingInputSheetException
      */
     public function getInputParameters()
@@ -120,38 +125,55 @@ class GoogleSheetsService extends GoogleSheetsRequests
             'valueRenderOption' => 'FORMULA'
         ]);
 
-        return $this->extractInputParameters($inputValues);
+        return $this->extractInputMeta($inputValues);
+    }
+
+    /**
+     * @return Google_Service_Sheets_ValueRange
+     * @throws MissingInputSheetException
+     */
+    public function getOutput()
+    {
+        $sheetName = 'Output';
+        /** @var Google_Service_Sheets_Sheet $sheet */
+        foreach ($this->sheetService->spreadsheets->get($this->id) as $sheet) {
+            $title                = $sheet->getProperties()->getTitle();
+            $this->sheets[$title] = $this->sheetService->spreadsheets_values->get($this->id, $title, [
+                'valueRenderOption' => 'FORMULA'
+            ]);
+        }
+        if (!isset($this->sheets[$sheetName])) {
+            throw new MissingInputSheetException($this->id);
+        }
+
+        return $this->sheetService->spreadsheets_values->get($this->id, $sheetName, [
+            'valueRenderOption' => 'FORMATTED_VALUE'
+        ]);
     }
 
     /**
      * @param Google_Service_Sheets_ValueRange $inputValues
-     * @return array
+     * @return InputMetaCollection
+     * @throws MissingInputSheetException
      */
-    protected function extractInputParameters(Google_Service_Sheets_ValueRange $inputValues): array
+    protected function extractInputMeta(Google_Service_Sheets_ValueRange $inputValues): InputMetaCollection
     {
-        $parameters = [];
+        $headers             = $inputValues[0];
+        $inputMetaCollection = new InputMetaCollection();
         foreach ($inputValues as $idx => $row) {
-            if (0 === $idx) {
-                continue;
+            if (0 !== $idx) {
+                $inputMetaCollection->add(new InputMeta($headers, $row));
             }
-            $parameters[] = [
-                'name'       => isset($row[0]) ? $row[0] : null,
-                'label'      => isset($row[1]) ? $row[1] : null,
-                'inputField' => isset($row[2]) ? $row[2] : null,
-                'unit'       => isset($row[3]) ? $row[3] : null,
-                'precision'  => isset($row[4]) ? $row[4] : null,
-                'value'      => isset($row[2]) ? $this->getInputValue($row[2]) : null
-            ];
         }
 
-        return $parameters;
+        return $inputMetaCollection;
     }
 
-    protected function getInputValue($inputField)
+    protected function getInputValue($reference)
     {
-        preg_match('/=(.*)!([A-Z])([0-9]+)/', $inputField, $matches);
+        preg_match('/=(.*)!([A-Z])([0-9]+)/', $reference, $matches);
 
-        if(4 !== count($matches)) {
+        if (4 !== count($matches)) {
             return null;
         }
         $sheet  = $matches[1];

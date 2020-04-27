@@ -9,7 +9,7 @@
                     {% if calculation.isActive %}
                         <li class="">
                             <a class=""
-                               href="{{ path('input', {spreadsheetId: calculation.spreadSheet.uid}) }}">{{ calculation.title }} </a>
+                               href="{{ path('calculation_input', {spreadsheetId: calculation.spreadSheet.uid}) }}">{{ calculation.title }} </a>
                         </li>
                     {% endif %}
                 {% endfor %}

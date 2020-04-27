@@ -14,6 +14,7 @@ class SpreadSheetFixtures extends Fixture
         $spreadSheet
             ->setName('Spannungsfall')
             ->setUid('19WfVnc16d4CZTiAIv75UbzO5pLeZBmLT')
+            ->setInputConfig([])
             ->setIsActive(true);
         $manager->persist($spreadSheet);
 

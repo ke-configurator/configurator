@@ -1,0 +1,75 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Input Parameters{% endblock %}
+
+{% block body %}
+    <div style="width: 100%">
+{#        <div class="panel panel-info">#}
+{#            <div title="click to expand/collapse" class="panel-heading">#}
+{#                <div class="panel-header-caption">Form Values</div>#}
+{#            </div>#}
+{#            <div class="panel-body in">#}
+{#                <table class="table table-hover table-condensed">#}
+{#                    <tr>#}
+{#                        <th>Name</th>#}
+{#                        <th>Label</th>#}
+{#                        <th>reference</th>#}
+{#                        <th>Default</th>#}
+{#                        <th>Unit</th>#}
+{#                        <th>Min</th>#}
+{#                        <th>Max</th>#}
+{#                        <th>Help</th>#}
+{#                    </tr>#}
+{#                    {% for parameter in inputParameters %}#}
+{#                        <tr>#}
+{#                            <td>{{ parameter.variable }}</td>#}
+{#                            <td>{{ parameter.label }}</td>#}
+{#                            <td>{{ parameter.reference }}</td>#}
+{#                            <td>{{ parameter.default }}</td>#}
+{#                            <td>{{ parameter.unit }}</td>#}
+{#                            <td>{{ parameter.range_min }}</td>#}
+{#                            <td>{{ parameter.range_max }}</td>#}
+{#                            <td>{{ parameter.help }}</td>#}
+{#                        </tr>#}
+{#                    {% endfor %}#}
+{#                </table>#}
+{#            </div>#}
+{#        </div>#}
+
+        <div class="panel panel-info">
+            <div title="click to expand/collapse" class="panel-heading">
+                <div class="panel-header-caption">Input Form</div>
+            </div>
+            <div class="panel-body in">
+                <table class="table" style="width: 600px">
+                    <tr>
+                        <td>
+                            {{ form_start(form) }}
+                            {{ form_end(form) }}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+
+        {% if output is defined and output|length %}
+            <div>Output</div>
+
+            <table class="table table-hover">
+                {% for row in output %}
+                    {% set rowNum = loop.index %}
+                    <tr>
+                        {% for cell in row %}
+                            {% if rowNum == 1 %}
+                                <th>{{ cell }}</th>
+                            {% else %}
+                                <td>{{ cell }}</td>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </table>
+        {% endif %}
+    </div>
+{% endblock %}

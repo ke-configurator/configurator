@@ -104,8 +104,9 @@ easy_admin:
                 fields:
                     - name
                     - uid
-                    - isActive
+                    - { property: 'inputConfig', type: 'json_array'}
                     - status
+                    - isActive
                     - created
                     - createdBy
                     - updated

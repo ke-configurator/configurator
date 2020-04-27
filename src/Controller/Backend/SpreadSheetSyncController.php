@@ -2,6 +2,8 @@
 
 namespace App\Controller\Backend;
 
+use App\Exception\MissingInputSheetException;
+use App\Service\GoogleSheetsService;
 use Doctrine\DBAL\ConnectionException;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
@@ -19,6 +21,7 @@ class SpreadSheetSyncController extends AbstractController
      * @Route("/syncSpreadSheets", name="sync_spreadsheets")
      * @param SpreadSheetRepository $repository
      * @param GoogleDriveService $driveService
+     * @param GoogleSheetsService $sheetService
      * @param EntityManagerInterface $em
      * @return RedirectResponse
      * @throws ConnectionException
@@ -26,6 +29,7 @@ class SpreadSheetSyncController extends AbstractController
     public function syncSpreadSheets(
         SpreadSheetRepository $repository,
         GoogleDriveService $driveService,
+        GoogleSheetsService $sheetService,
         EntityManagerInterface $em
     ) {
         $em->getConnection()->beginTransaction();
@@ -37,6 +41,7 @@ class SpreadSheetSyncController extends AbstractController
             }
 
             foreach ($driveService->getSpreadSheetList() as $uid => $name) {
+                $sheetService->setSheetServices($uid);
                 if (!isset($existingSpreadSheets[$uid])) {
                     $spreadSheet = new SpreadSheet();
                     $spreadSheet
@@ -47,11 +52,18 @@ class SpreadSheetSyncController extends AbstractController
                     $spreadSheet = $existingSpreadSheets[$uid];
                     unset($existingSpreadSheets[$uid]);
                 }
-                $spreadSheet->setStatus(SpreadSheet::STATUS_SYNCED);
+                try {
+                    $inputConfig = $sheetService->getInputParameters();
+                    $spreadSheet
+                        ->setInputConfig($inputConfig)
+                        ->setStatus(SpreadSheet::STATUS_SYNCED);
+                } catch (MissingInputSheetException $e) {
+                    $spreadSheet->setStatus(SpreadSheet::STATUS_MISSING_INPUT);
+                }
             }
 
             foreach ($existingSpreadSheets as $spreadSheet) {
-                $spreadSheet->setStatus(SpreadSheet::STATUS_MISSING);
+                $spreadSheet->setStatus(SpreadSheet::STATUS_MISSING_FILE);
             }
 
             $em->flush();
