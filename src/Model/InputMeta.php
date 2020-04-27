@@ -38,8 +38,10 @@ class InputMeta
             throw new MissingInputSheetException('unsupported fields');
         }
 
+        $data = array_values($data);
         foreach ($this->fields as $header) {
-            $this->data[$header] = isset($data[$header]) ? $data[$header] : null;
+            $idx = array_search($header, $headers);
+            $this->data[$header] = isset($data[$idx]) ? $data[$idx] : null;
         }
     }
 
