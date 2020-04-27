@@ -1,0 +1,3 @@
+{% for meta in value %}
+    <div style="font-family: Courier; white-space: pre-wrap"><code>{{ meta.asArray|json_encode(128) }}</code></div>
+{% endfor %}

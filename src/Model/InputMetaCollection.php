@@ -29,7 +29,6 @@ class InputMetaCollection implements ArrayAccess, Iterator, Countable
                 return $meta;
             }
         }
-
         return null;
     }
 

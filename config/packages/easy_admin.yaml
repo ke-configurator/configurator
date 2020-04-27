@@ -104,7 +104,7 @@ easy_admin:
                 fields:
                     - name
                     - uid
-                    - { property: 'inputConfig', type: 'json_array'}
+                    - { property: 'inputConfig', type: 'json_array', template: 'admin/inputMetaCollection.html.twig'}
                     - status
                     - isActive
                     - created
