@@ -5,41 +5,44 @@ namespace App\Service;
 use Exception;
 use Google_Client;
 use Google_Exception;
-use Google_Service_Sheets;
-use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 
 /**
- * GoogleClientService Class
+ * Provides the method getClient that returns a Google Client.
+ * The provided constructor parameter $googleAuthConfig must contain the JSON encoded credentials of a service account.
+ * It must contain at least the following keys:
+ *   - type
+ *   - client_id
+ *   - client_email
+ *   - private_key
  *
  * @package App\Service
  */
 class GoogleClientService
 {
-
-    /**
-     * Application name
-     *
-     * @var string
-     */
+    /** @var string $applicationName */
     protected $applicationName;
 
-    /**
-     * Credential location
-     *
-     * @var string
-     */
-    protected $credentials;
+    /** @var array $authConfig */
+    protected $authConfig;
 
     /**
      * Initiate the service
      *
      * @param string $applicationName
-     * @param string $credentials
+     * @param string $googleAuthConfig
+     * @throws Exception
      */
-    public function __construct($applicationName, $credentials)
+    public function __construct($applicationName, $googleAuthConfig)
     {
         $this->applicationName = $applicationName;
-        putenv("GOOGLE_APPLICATION_CREDENTIALS=$credentials");
+        if (!is_string($googleAuthConfig)) {
+            throw new Exception('expected $googleAuthConfig to be a string with JSON encoded credentials');
+        }
+        try {
+            $this->authConfig = json_decode($googleAuthConfig, true);
+        } catch (Exception $e) {
+            throw new Exception('Could not decode $googleAuthConfig: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -47,12 +50,13 @@ class GoogleClientService
      *
      * @param string $type
      * @return Google_Client
+     * @throws Google_Exception
      */
     public function getClient($type = 'offline')
     {
         $client = new Google_Client();
         $client->setApplicationName($this->applicationName);
-        $client->useApplicationDefaultCredentials();
+        $client->setAuthConfig($this->authConfig);
         $client->setAccessType($type);
 
         return $client;
